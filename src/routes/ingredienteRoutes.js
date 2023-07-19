@@ -1,5 +1,7 @@
 import express from 'express';
-import { getIngredientes, getIngredienteById, registerIngrediente, updateIngreso, deleteIngreso } from '../controllers/ingredienteControllers.js';
+import { check } from 'express-validator';
+import { validarCampos } from '../meddlewares/validar-campo.js';
+import { getIngredientes, getIngredienteById, registerIngrediente, updateIngrediente, deleteIngrediente, modificarPrecio } from '../controllers/ingredienteControllers.js';
 
 const router = express.Router();
 
@@ -8,8 +10,14 @@ const router = express.Router();
 
 router.get('/', getIngredientes);
 router.get('/:id', getIngredienteById);
-router.post('/', registerIngrediente);
-router.patch('/:id', updateIngreso);
-router.delete('/:nombre', deleteIngreso);
+router.post('/',
+    [
+        check('nombre', 'EL nombre es obligatorio').not().isEmpty(),
+        validarCampos
+    ]
+    , registerIngrediente);
+router.patch('/:id', updateIngrediente);
+router.delete('/:nombre', deleteIngrediente);
+router.patch('/precio/:id', modificarPrecio);
 
 export default router;

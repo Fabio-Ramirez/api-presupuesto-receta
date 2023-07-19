@@ -41,7 +41,6 @@ export const registerIngrediente = async (req, res) => {
         // Crear un nuevo ingrediente
         const newIngrediente = new Ingrediente({ nombre, cantidad, unidadMedida, precio, comentario, categoria });
 
-
         const existeIngrediente = await Ingrediente.findOne({ nombre: nombre })
         if (existeIngrediente) {
             return res.status(400).json({ message: 'Ya existe ese ingrediente' });
@@ -58,10 +57,11 @@ export const registerIngrediente = async (req, res) => {
 };
 
 //Actualizar un ingrediente
-export const updateIngreso = async (req, res) => {
+export const updateIngrediente = async (req, res) => {
     try {
         const { id } = req.params;
         const { nombre, cantidad, unidadMedida, precio, comentario, categoria } = req.body;
+        console.log("id: ", id, req.body);
 
         // Buscar y actualizar el ingrediente por su ID
         const ingrediente = await Ingrediente.findByIdAndUpdate(
@@ -90,7 +90,7 @@ export const updateIngreso = async (req, res) => {
 };
 
 //Eliminar un ingrediente por el nombre como ingreso de params.
-export const deleteIngreso = async (req, res) => {
+export const deleteIngrediente = async (req, res) => {
     try {
         const { nombre } = req.params;
 
@@ -113,6 +113,33 @@ export const deleteIngreso = async (req, res) => {
         res.status(500).json({ message: 'Ha ocurrido un error al eliminar el ingrediente' });
     }
 };
+
+export const modificarPrecio = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { precio } = req.body;
+        console.log("id: ", id, req.body);
+
+        // Buscar y actualizar el ingrediente por su ID
+        const ingrediente = await Ingrediente.findByIdAndUpdate(
+            id,
+            {
+                precio
+            },
+            { new: true } // Devuelve el precio actualizado
+        );
+
+        if (!ingrediente) {
+            return res.status(404).json({ message: 'Ingrediente no encontrado' });
+        }
+
+        // Enviar una respuesta al cliente
+        res.status(200).json({ message: 'Ingrediente con precio actualizado', ingrediente });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Ha ocurrido un error al actualizar el ingrediente' });
+    }
+}
 
 
 
