@@ -7,7 +7,11 @@ const ingredienteSchema = new mongoose.Schema({
     unidadMedida: { type: String, required: true },
     precio: { type: Number, required: true },
     comentario: { type: String, required: false },
-    categoria: { type: String, required: false },
+    estado: {
+        type: String,
+        required: true,
+        enum: ['creado', 'modificado', 'eliminado']
+    },
 });
 
 const Ingrediente = mongoose.model('Ingrediente', ingredienteSchema);

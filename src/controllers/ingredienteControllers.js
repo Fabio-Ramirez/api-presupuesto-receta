@@ -36,10 +36,11 @@ export const getIngredienteById = async (req, res) => {
 //Registrar un ingrediente  
 export const registerIngrediente = async (req, res) => {
     try {
-        const { nombre, cantidad, unidadMedida, precio, comentario, categoria } = req.body;
+        const estado = 'creado';
+        const { nombre, cantidad, unidadMedida, precio, comentario } = req.body;
 
         // Crear un nuevo ingrediente
-        const newIngrediente = new Ingrediente({ nombre, cantidad, unidadMedida, precio, comentario, categoria });
+        const newIngrediente = new Ingrediente({ nombre, cantidad, unidadMedida, precio, comentario, estado });
 
         const existeIngrediente = await Ingrediente.findOne({ nombre: nombre })
         if (existeIngrediente) {
@@ -60,8 +61,8 @@ export const registerIngrediente = async (req, res) => {
 export const updateIngrediente = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nombre, cantidad, unidadMedida, precio, comentario, categoria } = req.body;
-        console.log("id: ", id, req.body);
+        const { nombre, cantidad, unidadMedida, precio, comentario } = req.body;
+        const estado = 'modificado';
 
         // Buscar y actualizar el ingrediente por su ID
         const ingrediente = await Ingrediente.findByIdAndUpdate(
@@ -72,7 +73,7 @@ export const updateIngrediente = async (req, res) => {
                 unidadMedida,
                 precio,
                 comentario,
-                categoria
+                estado
             },
             { new: true } // Devuelve el ingrediente actualizado
         );
@@ -93,6 +94,7 @@ export const updateIngrediente = async (req, res) => {
 export const deleteIngrediente = async (req, res) => {
     try {
         const { nombre } = req.params;
+        const estado = 'eliminado';
 
         // Buscar el ingrediente por su ID
         const ingredienteEliminar = await Ingrediente.findOne({ nombre: nombre });
@@ -101,13 +103,12 @@ export const deleteIngrediente = async (req, res) => {
             return res.status(404).json({ message: 'Ingrediente no encontrado' });
         }
         // Buscar y eliminar el ingrediente por su ID
-        const result = await Ingrediente.deleteOne({ nombre: nombre });
+        ingredienteEliminar.estado = estado;
 
-        if (result.deletedCount === 0) {
-            return res.status(404).json({ message: 'Ingrediente no encontrado' });
-        }
+        await ingredienteEliminar.save();
+
         // Enviar una respuesta al cliente
-        res.status(200).json({ message: 'Fue eliminado el Ingrediente' });
+        res.status(200).json({ message: 'Fue eliminado el Ingrediente', ingredienteEliminar });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Ha ocurrido un error al eliminar el ingrediente' });
@@ -134,7 +135,7 @@ export const modificarPrecio = async (req, res) => {
         }
 
         // Enviar una respuesta al cliente
-        res.status(200).json({ message: 'Ingrediente con precio actualizado', ingrediente });
+        res.status(200).json({ message: 'Ingrediente con precio actualizado', nombre: ingrediente.nombre });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Ha ocurrido un error al actualizar el ingrediente' });
