@@ -44,7 +44,7 @@ export const registerIngrediente = async (req, res) => {
 
         const existeIngrediente = await Ingrediente.findOne({ nombre: nombre })
         if (existeIngrediente) {
-            return res.status(400).json({ message: 'Ya existe ese ingrediente' });
+            return res.status(400).json({ message: 'Ya existe ese ingrediente', existeIngrediente });
         }
 
         await newIngrediente.save();
@@ -141,6 +141,32 @@ export const modificarPrecio = async (req, res) => {
         res.status(500).json({ message: 'Ha ocurrido un error al actualizar el ingrediente' });
     }
 }
+
+//Se restaura el ingrediente eliminado, el nombre ingresa como params.
+export const restaurarIngrediente = async (req, res) => {
+    try {
+        const { nombre } = req.params;
+        const estado = 'restaurado';
+
+        // Buscar el ingrediente por su ID
+        const ingredienteRestaurar = await Ingrediente.findOne({ nombre: nombre });
+
+        if (!ingredienteRestaurar) {
+            return res.status(404).json({ message: 'Ingrediente no encontrado' });
+        }
+        // Buscar y eliminar el ingrediente por su ID
+        ingredienteRestaurar.estado = estado;
+
+        await ingredienteRestaurar.save();
+        // Enviar una respuesta al cliente
+        res.status(200).json({ message: 'Ingrediente restaurado', ingredienteRestaurar });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Ha ocurrido un error al resturar el ingrediente' });
+    }
+}
+
+
 
 
 

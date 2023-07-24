@@ -10,7 +10,7 @@ const ingredienteSchema = new mongoose.Schema({
     estado: {
         type: String,
         required: true,
-        enum: ['creado', 'modificado', 'eliminado']
+        enum: ['creado', 'modificado', 'restaurado', 'eliminado']
     },
 });
 
