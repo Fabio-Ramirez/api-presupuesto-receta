@@ -1,7 +1,7 @@
 import express from 'express';
 import { check } from 'express-validator';
 import { validarCampos } from '../meddlewares/validar-campo.js';
-import { getIngredientes, getIngredienteById, registerIngrediente, updateIngrediente, deleteIngrediente, modificarPrecio, restaurarIngrediente } from '../controllers/ingredienteControllers.js';
+import { getIngredientes, getIngredienteById, registerIngrediente, updateIngrediente, deleteIngrediente, modificarPrecio, restaurarIngrediente, getIngredientesEliminados } from '../controllers/ingredienteControllers.js';
 
 const router = express.Router();
 
@@ -9,6 +9,7 @@ const router = express.Router();
 // Ruta para obtener todos los ingresos
 
 router.get('/', getIngredientes);
+router.get('/eliminados', getIngredientesEliminados);
 router.get('/:id', getIngredienteById);
 router.post('/',
     [

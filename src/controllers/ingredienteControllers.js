@@ -14,6 +14,17 @@ export const getIngredientes = async (req, res) => {
     }
 };
 
+//Obtener todos los ingredientes eliminados
+export const getIngredientesEliminados = async (req, res) => {
+    try {
+        const ingredientesEliminados = await Ingrediente.find({ estado: 'eliminado' });
+        res.status(200).json(ingredientesEliminados);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Ha ocurrido un error al obtener los ingredientes' });
+    }
+};
+
 //Obtener el ingrediente solicitado
 export const getIngredienteById = async (req, res) => {
     try {
@@ -119,7 +130,6 @@ export const modificarPrecio = async (req, res) => {
     try {
         const { id } = req.params;
         const { precio } = req.body;
-        console.log("id: ", id, req.body);
 
         // Buscar y actualizar el ingrediente por su ID
         const ingrediente = await Ingrediente.findByIdAndUpdate(

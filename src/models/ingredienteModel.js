@@ -11,7 +11,7 @@ const ingredienteSchema = new mongoose.Schema({
         type: String,
         required: true,
         enum: ['creado', 'modificado', 'restaurado', 'eliminado']
-    },
+    }
 });
 
 const Ingrediente = mongoose.model('Ingrediente', ingredienteSchema);
