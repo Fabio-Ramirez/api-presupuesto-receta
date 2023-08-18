@@ -1,4 +1,6 @@
 import Ingrediente from '../models/ingredienteModel.js';
+import moment from 'moment';
+import { agregarRegistro } from '../meddlewares/actividadLog.js';
 
 //Obtener todos los ingredientes
 export const getIngredientes = async (req, res) => {
@@ -51,12 +53,27 @@ export const registerIngrediente = async (req, res) => {
         const { nombre, cantidad, unidadMedida, precio, comentario } = req.body;
 
         // Crear un nuevo ingrediente
-        const newIngrediente = new Ingrediente({ nombre, cantidad, unidadMedida, precio, comentario, estado });
+        const momentFecha = moment();
+        const newComentario = {
+            fecha: momentFecha.format('DD-MM-YYYY'),
+            mensaje: comentario
+        };
+
+        const historial = {
+            fecha: momentFecha.format('DD-MM-YYYY HH:mm:ss'),
+            mensaje: 'Se crea el ingrediente'
+        }
+        const newIngrediente = new Ingrediente({ nombre, cantidad, unidadMedida, precio, comentario, estado, historial });
+        if (comentario) {
+            newIngrediente.comentario = newComentario;
+        }
 
         const existeIngrediente = await Ingrediente.findOne({ nombre: nombre })
         if (existeIngrediente) {
             return res.status(400).json({ message: 'Ya existe ese ingrediente', existeIngrediente });
         }
+        // Registrar la actividad en el archivo de registro
+        agregarRegistro(`Se creó el ingrediente ${nombre}`);
 
         await newIngrediente.save();
 
@@ -75,25 +92,43 @@ export const updateIngrediente = async (req, res) => {
         const { nombre, cantidad, unidadMedida, precio, comentario } = req.body;
         const estado = 'modificado';
 
-        // Buscar y actualizar el ingrediente por su ID
-        const ingrediente = await Ingrediente.findByIdAndUpdate(
-            id,
-            {
-                nombre,
-                cantidad,
-                unidadMedida,
-                precio,
-                comentario,
-                estado
-            },
-            { new: true } // Devuelve el ingrediente actualizado
-        );
-
-        if (!ingrediente) {
-            return res.status(404).json({ message: 'Ingrediente no encontrado' });
+        // Preparar los datos para actualizar
+        const momentFecha = moment();
+        const historial = {
+            fecha: momentFecha.format('DD-MM-YYYY HH:mm:ss'),
+            mensaje: 'Se modifica el ingrediente'
         }
 
+        const datosActualizados = {
+            nombre,
+            cantidad,
+            unidadMedida,
+            precio,
+            estado,
+            historial
+        };
+
+        // Agregar el comentario si está presente en el req.body
+        if (comentario) {
+            const newComentario = {
+                fecha: momentFecha.format('DD-MM-YYYY'),
+                mensaje: comentario
+            };
+            datosActualizados.comentario = newComentario;
+        }
+        // Actualizar el ingrediente
+        const ingredienteActualizado = await Ingrediente.findByIdAndUpdate(
+            id,
+            datosActualizados,
+            { new: true }
+        );
+
+        if (!ingredienteActualizado) {
+            agregarRegistro(`El ingrediente ${nombre}, no se encontró`);
+            return res.status(404).json({ message: 'Ingrediente no encontrado' });
+        }
         // Enviar una respuesta al cliente
+        agregarRegistro(`El ingrediente ${nombre}, se actualizó correctamente`);
         res.status(200).json({ message: 'Ingrediente actualizado', ingrediente });
     } catch (error) {
         console.error(error);
