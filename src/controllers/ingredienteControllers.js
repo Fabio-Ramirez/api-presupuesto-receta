@@ -56,17 +56,14 @@ export const registerIngrediente = async (req, res) => {
         const momentFecha = moment();
         const newComentario = {
             fecha: momentFecha.format('DD-MM-YYYY'),
-            mensaje: comentario
+            mensaje: comentario ? comentario : ''
         };
 
-        const historial = {
+                const historial = {
             fecha: momentFecha.format('DD-MM-YYYY HH:mm:ss'),
             mensaje: 'Se crea el ingrediente'
         }
-        const newIngrediente = new Ingrediente({ nombre, cantidad, unidadMedida, precio, comentario, estado, historial });
-        if (comentario) {
-            newIngrediente.comentario = newComentario;
-        }
+        const newIngrediente = new Ingrediente({ nombre, cantidad, unidadMedida, precio, newComentario, estado, historial });
 
         const existeIngrediente = await Ingrediente.findOne({ nombre: nombre })
         if (existeIngrediente) {
