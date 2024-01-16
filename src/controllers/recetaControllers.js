@@ -46,7 +46,6 @@ export const mostrarIngredientes = async (req, res) => {
             return res.status(404).json({ message: 'Receta no encontrada' });
         }
 
-
         // Enviar una respuesta al cliente
         res.status(200).json(receta.ingredientes);
     } catch (error) {
@@ -58,13 +57,14 @@ export const mostrarIngredientes = async (req, res) => {
 // Controlador en el backend para manejar la solicitud POST de agregar una receta
 export const agregarReceta = async (req, res) => {
     try {
-        const { producto, ingredientes, produccion } = req.body; // Obtén los datos de la solicitud
+        const { producto, ingredientes, produccion, estado } = req.body; // Obtén los datos de la solicitud
 
         // Crea una nueva instancia del modelo Receta con los datos recibidos
         const nuevaReceta = new Receta({
             producto,
             ingredientes, // Aquí, ingredientes debe ser un array de IDs de ingredientes
-            produccion
+            produccion,
+            estado
         });
 
         // Guarda la nueva receta en la base de datos
@@ -99,7 +99,8 @@ export const agregarIngredienteAReceta = async (req, res) => {
             return res.status(404).json({ message: 'Ingrediente existente en receta' });
         }
 
-        receta.ingredientes.push(idIngrediente)
+        receta.ingredientes.push(idIngrediente);
+        receta.estado = 'modificado'
 
         await receta.save();
 

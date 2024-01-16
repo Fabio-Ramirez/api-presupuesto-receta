@@ -16,6 +16,34 @@ export const getIngredientes = async (req, res) => {
     }
 };
 
+//Obtener todos el ingrediente por el nombre
+export const getIngredienteNombre = async (req, res) => {
+    try {
+        const term = req.params.term; // Cambiado a req.body para obtener el término desde el cuerpo de la solicitud
+
+        // Obtener todos los ingredientes
+        const todosIngredientes = await Ingrediente.find({});
+
+        //console.log("ingredientes: ", todosIngredientes)
+        // Filtrar los ingredientes basados en el término
+        const ingredientesFiltrados = [];
+        if (term) {
+            todosIngredientes.forEach(ingrediente => {
+                if (ingrediente.nombre.toLowerCase().includes(term.toLowerCase())) {
+                    ingredientesFiltrados.push(ingrediente);
+                }
+            });
+        }
+
+
+        // Enviar una respuesta al cliente con los resultados de la búsqueda
+        res.status(200).json(ingredientesFiltrados);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Ha ocurrido un error al obtener los ingredientes' });
+    }
+};
+
 //Obtener todos los ingredientes eliminados
 export const getIngredientesEliminados = async (req, res) => {
     try {
@@ -31,7 +59,7 @@ export const getIngredientesEliminados = async (req, res) => {
 export const getIngredienteById = async (req, res) => {
     try {
         const { id } = req.params;
-
+        
         // Buscar un ingrediente por su ID en la base de datos
         const ingrediente = await Ingrediente.findById(id);
         if (!ingrediente) {
@@ -43,6 +71,24 @@ export const getIngredienteById = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Ha ocurrido un error al obtener el ingrediente' });
+    }
+};
+
+// Obtener el o los ingredientes solicitados dinamicamente desde el front
+//a medida que se tipee el term. 
+export const buscarIngredientes = async (req, res) => {
+    try {
+        const queryIngrediente = Ingrediente.find({});
+        const { term } = req.body;  // Cambiado a req.query para obtener el término desde la consulta
+
+        // Realiza una búsqueda basada en el término
+        const ingredientes = await Ingrediente.find({ nombre: { $regex: new RegExp(term, 'i') } });
+
+        // Enviar una respuesta al cliente con los resultados de la búsqueda
+        res.status(200).json(ingredientes);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Ha ocurrido un error al obtener los ingredientes' });
     }
 };
 
@@ -59,7 +105,7 @@ export const registerIngrediente = async (req, res) => {
             mensaje: comentario ? comentario : ''
         };
 
-                const historial = {
+        const historial = {
             fecha: momentFecha.format('DD-MM-YYYY HH:mm:ss'),
             mensaje: 'Se crea el ingrediente'
         }

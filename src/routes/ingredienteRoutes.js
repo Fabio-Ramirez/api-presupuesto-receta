@@ -1,7 +1,11 @@
 import express from 'express';
 import { check } from 'express-validator';
 import { validarCampos } from '../meddlewares/validar-campo.js';
-import { getIngredientes, getIngredienteById, registerIngrediente, updateIngrediente, deleteIngrediente, modificarPrecio, restaurarIngrediente, getIngredientesEliminados } from '../controllers/ingredienteControllers.js';
+import {
+    getIngredientes, /*getIngredienteById,*/ registerIngrediente,
+    updateIngrediente, deleteIngrediente, modificarPrecio, restaurarIngrediente,
+    getIngredientesEliminados, buscarIngredientes, getIngredienteNombre
+} from '../controllers/ingredienteControllers.js';
 
 const router = express.Router();
 
@@ -10,7 +14,9 @@ const router = express.Router();
 
 router.get('/', getIngredientes);
 router.get('/eliminados', getIngredientesEliminados);
-router.get('/:id', getIngredienteById);
+//router.get('/:id', getIngredienteById);
+router.get('/buscarIngredienteNombre/:term', getIngredienteNombre);
+router.patch('/buscarIngredientes', buscarIngredientes);
 router.post('/',
     [
         check('nombre', 'EL nombre es obligatorio').not().isEmpty(),

@@ -7,7 +7,15 @@ const recetaSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Ingrediente'
     }], // Array de IDs de ingredientes
-    produccion: { type: Number, required: false }
+    produccion: {
+        cantidad: { type: Number, required: false },
+        unidadMedida: { type: String, required: false }
+    },
+    estado: {
+        type: String,
+        required: true,
+        enum: ['creado', 'modificado', 'restaurado', 'eliminado']
+    },
 });
 
 const Receta = mongoose.model('Receta', recetaSchema);
