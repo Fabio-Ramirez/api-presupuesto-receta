@@ -67,6 +67,11 @@ export const agregarReceta = async (req, res) => {
             estado
         });
 
+        const existeReceta = await Receta.findOne({ producto: producto })
+        if (existeReceta) {
+            return res.status(400).json({ message: 'Receta de ' + existeReceta.producto + ' duplicada' });
+        }
+
         // Guarda la nueva receta en la base de datos
         const recetaGuardada = await nuevaReceta.save();
 

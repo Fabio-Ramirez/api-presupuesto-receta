@@ -34,8 +34,6 @@ export const getIngredienteNombre = async (req, res) => {
                 }
             });
         }
-
-
         // Enviar una respuesta al cliente con los resultados de la búsqueda
         res.status(200).json(ingredientesFiltrados);
     } catch (error) {
