@@ -117,4 +117,34 @@ export const agregarIngredienteAReceta = async (req, res) => {
     }
 };
 
+export const modificarReceta = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { ingredientes, produccion, estado } = req.body;
+
+        const datosActualizados = {
+            produccion,
+            ingredientes,
+            estado
+        };
+        // Actualizar el ingrediente
+        const recetaActualizada = await Receta.findByIdAndUpdate(
+            id,
+            datosActualizados,
+            { new: true }
+        );
+
+        if (!recetaActualizada) {
+            agregarRegistro(`La receta ${producto}, no se encontró`);
+            return res.status(404).json({ message: 'Receta no encontrada' });
+        }
+
+        // Envía una respuesta al cliente confirmando la creación de la receta
+        res.status(201).json({ message: 'Receta modificada con éxito', receta: recetaActualizada });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Ha ocurrido un error al modificar la receta', error });
+    }
+};
+
 

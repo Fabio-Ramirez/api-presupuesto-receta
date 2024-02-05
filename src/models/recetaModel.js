@@ -10,8 +10,11 @@ const recetaSchema = new mongoose.Schema({
             required: false
         },
         nombre: { type: String, required: false },
-        cantidad: { type: Number, required: false },
-        unidadMedida: { type: String, required: false }
+        produccion: {
+            cantidad: { type: Number, required: false },
+            unidadMedida: { type: String, required: false }
+        }
+
     }],
     produccion: {
         cantidad: { type: Number, required: true },
