@@ -5,7 +5,7 @@ const ingredienteSchema = new mongoose.Schema({
     nombre: { type: String, required: true, unique: true },
     cantidad: { type: Number, required: true },
     unidadMedida: { type: String, required: true },
-    precio: { type: Number, required: true },
+    precio: { type: Number, required: false },
     comentario: [{
         fecha: { type: Object, required: false },
         mensaje: { type: String, required: false }
