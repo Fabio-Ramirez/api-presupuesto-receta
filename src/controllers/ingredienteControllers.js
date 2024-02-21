@@ -148,14 +148,7 @@ export const updateIngrediente = async (req, res) => {
             historial
         };
 
-        // Agregar el comentario si está presente en el req.body
-        if (comentario) {
-            const newComentario = {
-                fecha: momentFecha.format('DD-MM-YYYY'),
-                mensaje: comentario
-            };
-            datosActualizados.comentario = newComentario;
-        }
+
         // Actualizar el ingrediente
         const ingredienteActualizado = await Ingrediente.findByIdAndUpdate(
             id,
@@ -169,7 +162,7 @@ export const updateIngrediente = async (req, res) => {
         }
         // Enviar una respuesta al cliente
         agregarRegistro(`El ingrediente ${nombre}, se actualizó correctamente`);
-        res.status(200).json({ message: 'Ingrediente actualizado', ingrediente });
+        res.status(200).json({ message: 'Ingrediente actualizado', ingredienteActualizado });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Ha ocurrido un error al actualizar el ingrediente' });
