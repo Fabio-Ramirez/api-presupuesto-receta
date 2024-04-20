@@ -147,4 +147,41 @@ export const modificarReceta = async (req, res) => {
     }
 };
 
+export const ingredienteEnReceta = async (req, res) => {
+    try {
+        const { idIngrediente } = req.params;
+
+        // Buscar todas las recetas que contienen el ingrediente en la base de datos
+        const recetasEncontradas = await Receta.find({
+            'ingredientes.id': idIngrediente.toString()
+        });
+
+        // Envía una respuesta al cliente con las recetas encontradas
+        res.status(200).json({ recetasEncontradas });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Ha ocurrido un error al buscar recetas con el ingrediente', error });
+    }
+}
+
+export const eliminarIngredienteEnReceta = async (req, res) => {
+    try {
+        const { idIngrediente } = req.params;
+
+        // Obtener todas las recetas
+        const recetas = await Receta.find();
+
+        for (const receta of recetas) {
+            receta.ingredientes = receta.ingredientes.filter(ingrediente => ingrediente.id.toString() !== idIngrediente.toString());
+            await receta.save();
+        }
+
+
+        // Envía una respuesta al cliente
+        res.status(200).json({ message: 'Ingrediente eliminado de todas las recetas' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Ha ocurrido un error al buscar recetas con el ingrediente', error });
+    }
+}
 

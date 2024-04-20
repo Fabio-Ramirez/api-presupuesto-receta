@@ -93,7 +93,7 @@ export const buscarIngredientes = async (req, res) => {
 export const registerIngrediente = async (req, res) => {
     try {
         const estado = 'creado';
-        const { nombre, cantidad, unidadMedida, precio, comentario } = req.body;
+        const { nombre, cantidad, unidadMedida, precio, comentario, enReceta } = req.body;
 
         // Crear un nuevo ingrediente
         const momentFecha = moment();
@@ -106,7 +106,7 @@ export const registerIngrediente = async (req, res) => {
             fecha: momentFecha.format('DD-MM-YYYY HH:mm:ss'),
             mensaje: 'Se crea el ingrediente'
         }
-        const newIngrediente = new Ingrediente({ nombre, cantidad, unidadMedida, precio, newComentario, estado, historial });
+        const newIngrediente = new Ingrediente({ nombre, cantidad, unidadMedida, precio, newComentario, estado, historial, enReceta });
 
         const existeIngrediente = await Ingrediente.findOne({ nombre: nombre })
         if (existeIngrediente) {
@@ -129,7 +129,7 @@ export const registerIngrediente = async (req, res) => {
 export const updateIngrediente = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nombre, cantidad, unidadMedida, precio, comentario } = req.body;
+        const { nombre, cantidad, unidadMedida, precio, comentario, enReceta } = req.body;
         const estado = 'modificado';
 
         // Preparar los datos para actualizar
@@ -145,7 +145,8 @@ export const updateIngrediente = async (req, res) => {
             unidadMedida,
             precio,
             estado,
-            historial
+            historial,
+            enReceta
         };
 
 
@@ -183,6 +184,7 @@ export const deleteIngrediente = async (req, res) => {
         }
         // Buscar y eliminar el ingrediente por su ID
         ingredienteEliminar.estado = estado;
+        ingredienteEliminar.enReceta = false;
 
         await ingredienteEliminar.save();
 
@@ -234,6 +236,7 @@ export const restaurarIngrediente = async (req, res) => {
         }
         // Buscar y eliminar el ingrediente por su ID
         ingredienteRestaurar.estado = estado;
+        ingredienteRestaurar.enReceta = true;
 
         await ingredienteRestaurar.save();
         // Enviar una respuesta al cliente

@@ -15,6 +15,7 @@ const ingredienteSchema = new mongoose.Schema({
         required: true,
         enum: ['creado', 'modificado', 'restaurado', 'eliminado']
     },
+    enReceta: { type: Boolean, required: true},
     historial: [{
         fecha: { type: Object, required: false },
         mensaje: { type: String, required: false }
